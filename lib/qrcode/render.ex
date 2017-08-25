@@ -16,9 +16,8 @@ defmodule QRCode.Render do
     |> IO.puts()
   end
 
-  defp do_render(1),         do: "\e[40m  \e[0m" 
-  defp do_render(0),         do: "\e[47m  \e[0m" 
+  defp do_render(1),         do: "\e[40m  \e[0m"
+  defp do_render(0),         do: "\e[47m  \e[0m"
   defp do_render(nil),       do: "\e[46m  \e[0m"
-  defp do_render(:data),     do: "\e[42m  \e[0m"
   defp do_render(:reserved), do: "\e[44m  \e[0m"
 end

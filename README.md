@@ -1,11 +1,11 @@
 # QRCode
 
-Implement QRCode.
+QR Code implementation in Elixir.
 
 ![demo](priv/demo.png)
 
 Spec:
-- Level: 1 - 7
+- Version: 1 - 7
 - ECC level: L
 - Encoding mode: Byte
 
