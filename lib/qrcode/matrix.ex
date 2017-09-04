@@ -185,6 +185,26 @@ defmodule QRCode.Matrix do
     %{m | matrix: matrix, mask: mask}
   end
 
+  @doc """
+  Draw the data bits with mask 0.
+  """
+  @spec draw_data_with_mask0(t, binary) :: t
+  def draw_data_with_mask0(%__MODULE__{matrix: matrix, modules: modules} = m, data) do
+    matrix = Stream.unfold(modules - 1, fn
+        -1 -> nil
+        8  -> {8, 5}
+        n  -> {n, n - 2}
+      end)
+      |> Stream.zip(Stream.cycle([:up, :down]))
+      |> Stream.flat_map(fn {z, path} -> path(path, {modules - 1, z}) end)
+      |> Stream.filter(&available?(matrix, &1))
+      |> Stream.zip(QRCode.Encode.bits(data))
+      |> Enum.reduce(matrix, fn {coordinate, v}, acc ->
+        update(acc, coordinate, v ^^^ QRCode.Mask.mask(0, coordinate))
+      end)
+    %{m | matrix: matrix, mask: 0}
+  end
+
   defp path(:up,   {x, y}), do: for i <- x..0, j <- y..(y - 1), do: {i, j}
   defp path(:down, {x, y}), do: for i <- 0..x, j <- y..(y - 1), do: {i, j}
 

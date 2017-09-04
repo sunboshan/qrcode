@@ -3,6 +3,8 @@ defmodule QRCode.Encode do
   Data encoding in Byte Mode.
   """
 
+  import Bitwise
+
   @byte_mode 0b0100
   @pad <<236, 17>>
   @capacity_l [0, 17, 32, 53, 78, 106, 134, 154]
@@ -15,6 +17,7 @@ defmodule QRCode.Encode do
     6 => 136,
     7 => 156,
   }
+  @mask0 <<0x99999999999999666666666666669966666666659999999996699533333333332ccd332ccccccccccccccd333333333333332ccd332ccccccccccccccd333333333333332ccd332ccccccccccccccd333333333333332ccd332ccccccccccccccd333333333333332ccd332ccccccccccccccd33333333333333333332cccccccccd33333333::1072>>
 
   @doc """
   Encode the binary.
@@ -35,6 +38,28 @@ defmodule QRCode.Encode do
       |> Enum.flat_map(&bits/1)
       |> pad_bytes(version)
     {version, encoded}
+  end
+
+  @doc """
+  Encode the binary with custom pattern bits.
+  """
+  @spec encode(binary, bitstring) :: {integer, [0 | 1]}
+  def encode(bin, bits) do
+    version = 5
+    n = byte_size(bin)
+    n1 = n + 2
+    n2 = @ecc_l[version] - n1
+    <<_::binary-size(n1), mask::binary-size(n2), _::binary>> = @mask0
+    encoded = <<@byte_mode::4, n::8, bin::binary-size(n), 0::4, xor(bits, mask)::bits>>
+      |> bits()
+      |> pad_bytes(version)
+    {version, encoded}
+  end
+
+  defp xor(<<>>, _), do: <<>>
+  defp xor(_, <<>>), do: <<>>
+  defp xor(<<a::1, t1::bits>>, <<b::1, t2::bits>>) do
+    <<(a ^^^ b)::1, xor(t1, t2)::bits>>
   end
 
   @doc """

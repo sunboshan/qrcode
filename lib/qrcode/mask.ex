@@ -21,7 +21,7 @@ defmodule QRCode.Mask do
     |> Enum.reduce(0, &(do_rule1(&1, {nil, 0}, 0) + &2))
   end
 
-  defp do_rule1([], _, acc), do: acc
+  defp do_rule1([], _, acc),           do: acc
   defp do_rule1([h | t], {_, 0}, acc), do: do_rule1(t, {h, 1}, acc)
   defp do_rule1([h | t], {h, 4}, acc), do: do_rule1(t, {h, 5}, acc + 3)
   defp do_rule1([h | t], {h, 5}, acc), do: do_rule1(t, {h, 5}, acc + 1)
