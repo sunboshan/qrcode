@@ -9,10 +9,11 @@ defmodule QRCode.Render do
   @spec render(QRCode.Matrix.t) :: :ok
   def render(%QRCode.Matrix{matrix: matrix}) do
     Tuple.to_list(matrix)
-    |> Enum.map_join("\n", fn e ->
+    |> Stream.map(fn e ->
       Tuple.to_list(e)
-      |> Enum.map_join(&do_render/1)
+      |> Enum.map(&do_render/1)
     end)
+    |> Enum.intersperse("\n")
     |> IO.puts()
   end
 
@@ -30,9 +31,10 @@ defmodule QRCode.Render do
     (for e <- Tuple.to_list(matrix), do: Tuple.to_list(e))
     |> Enum.reverse()
     |> transform()
-    |> Enum.map_join("\n", fn e ->
-      Enum.map_join(e, &do_render/1)
+    |> Stream.map(fn e ->
+      Enum.map(e, &do_render/1)
     end)
+    |> Enum.intersperse("\n")
     |> IO.puts()
   end
 
