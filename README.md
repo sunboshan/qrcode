@@ -13,6 +13,9 @@ References:
 - ISO/IEC 18004:2006(E)
 - http://www.thonky.com/qr-code-tutorial/
 
+Slide:
+- [Implementing QR Code](https://www.slideshare.net/BoshanSun/implementing-qrcode)
+
 ## Usage
 
 ```
